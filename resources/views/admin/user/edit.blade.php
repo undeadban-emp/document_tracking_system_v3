@@ -134,8 +134,8 @@
                 <div class="col-md-6">
                     <select class="form-control selectpicker @error('accountRole') is-invalid @enderror" id="accountRole" name="accountRole" data-live-search="true" data-width="100%" data-dropup-auto="false" data-size="3" autofocus>
                         <option></option>
-                        <option value="liaison" @if (old('accountRole', $user->role)) selected @endif>Liaison</option>
-                        <option value="checker" @if (old('accountRole', $user->role)) selected @endif>Checker</option>
+                        <option value="liaison" @if (old('accountRole', $user->role == 'liaison')) selected @endif>Liaison</option>
+                        <option value="checker" @if (old('accountRole', $user->role == 'checker')) selected @endif>Checker</option>
                     </select>
                     @error('accountRole')
                         <span class="invalid-feedback" role="alert">
