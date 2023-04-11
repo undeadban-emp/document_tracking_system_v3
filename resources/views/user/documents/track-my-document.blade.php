@@ -140,11 +140,14 @@
                                     </div>
                                 </div>
                         @endforeach
+                        <div style="border-radius:5px;" class="timeline-breaker text-center timeline-breaker-middle">
+                            <div>End</div>
+                        </div>
                               </div>
                          </div>
                          @else
                          <div class="col-md-12 text-center">
-                              <img src="/landing-page-theme/images/undraw_No_data_re_kwbl.png" style="width: 200px;">
+                              <img src="{{ url('landing-page-theme/images/undraw_No_data_re_kwbl.png') }}" style="width: 200px;">
                               <p class="text-danger">The tracking ID is invalid or might have expired.</p>
                          </div>
                          @endif
