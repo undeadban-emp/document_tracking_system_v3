@@ -108,11 +108,11 @@
                          </div>
                     </div>
                     @endforeach
-                    @if($check != null)
-                        <div class="timeline-breaker text-center timeline-breaker-middle">
+                    {{-- @if($check != null) --}}
+                        <div style="border-radius:5px;" class="timeline-breaker text-center timeline-breaker-middle">
                             <div>End</div>
                         </div>
-                    @endif
+                    {{-- @endif --}}
 
                </>
           </div>

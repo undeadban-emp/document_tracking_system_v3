@@ -111,7 +111,7 @@ $.ajaxSetup({
                             } else {
                                 // Delete Service Process
                                 $.ajax({
-                                    url: `/admin/service-process/${processID}`,
+                                    url: `{{ url('/admin/service-process/${processID}') }}`,
                                     type: 'DELETE',
                                     success: function(data) {
                                         // Create an paragraph element with text-center class
