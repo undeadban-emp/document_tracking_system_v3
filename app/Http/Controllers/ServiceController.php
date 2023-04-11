@@ -246,8 +246,8 @@ class ServiceController extends Controller
                 ]);
 
             } else if ($currentRecord->status === 'received') {
-
-                if($index_checker->forwarded_by != $currentRecord->service_index){
+                // if((int)$index_checker->forwarded_by != $currentRecord->service_index){
+                if($index_checker->service_index != $currentRecord->service_index){
                     // check service index if same
                     DB::transaction(function () use ($trackings, $currentRecord, $request) {
                         $currentRecord->updated_at;
