@@ -186,6 +186,7 @@ class ServiceController extends Controller
             if ($service->user_id == $returnedTo) {
                 DB::table('user_service')->insert([
                     'tracking_number' => $trackingNumber,
+                    'phone_number' => $service->phone_number,
                     'user_id' => $service->user_id,
                     'service_index' => $service->service_index,
                     'service_id' => $service->service_id,
@@ -200,7 +201,11 @@ class ServiceController extends Controller
                     'updated_at' => Carbon::now(),
                 ]);
                 $availBy = User::find($service->user_id);
-
+                if($availBy->phone_number != null){
+                    $phoneNumber = $availBy->phone_number;
+                }else{
+                    $phoneNumber = $service->phone_number;
+                }
                 $client = new CurlHttpClient(['verify_peer' => false, 'verify_host' => false]);
                 $response = $client->request('GET', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&t=N8hyd6w');
                 $res = ltrim($response->getContent(), '0');
@@ -209,8 +214,9 @@ class ServiceController extends Controller
                 $client->request('POST', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&sid='.$clientID, ['body' => '40']);
                 $client->request('GET', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&sid='.$clientID);
                 $client->request('POST', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&sid='.$clientID, [
-                    'body' => '42["returned", "contact_number='.$availBy->phone_number.'&trackingNumber=' .$request->tracking_number.'&userIncharge=' . Auth::user()->fullname . '"]'
+                    'body' => '42["returned", "contact_number='.$phoneNumber.'&trackingNumber=' .$request->tracking_number.'&userIncharge=' . Auth::user()->fullname . '"]'
                 ]);
+
                 Log::info(Auth::user()->fullname . '('. Auth::user()->userOffice->description .')' . ' Returned the Transaction with Tracking No. ' . $request->tracking_number);
                 return redirect()->to(route('service.outgoing'))->with('success', 'Successfully returned the document');
             }
@@ -232,6 +238,12 @@ class ServiceController extends Controller
                     $nextRecord->save(['timestamps' => false]);
                 });
 
+                if($currentRecord->avail_by->phone_number != null){
+                    $phoneNumber = $currentRecord->avail_by->phone_number;
+                }else{
+                    $phoneNumber = $currentRecord->phone_number;
+                }
+
                 // receive docs with status of pending
                 $client = new CurlHttpClient(['verify_peer' => false, 'verify_host' => false]);
                 $response = $client->request('GET', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&t=N8hyd6w');
@@ -242,8 +254,11 @@ class ServiceController extends Controller
                 $client->request('POST', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&sid='.$clientID, ['body' => '40']);
                 $client->request('GET', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&sid='.$clientID);
                 $client->request('POST', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&sid='.$clientID, [
-                    'body' => '42["docRecPending", "contact_number='.$currentRecord->avail_by->phone_number.'&trackingNumber=' .$request->tracking_number.'&userIncharge=' . Auth::user()->fullname . '"]'
+                    'body' => '42["docRecPending", "contact_number='.$phoneNumber.'&trackingNumber=' .$request->tracking_number.'&userIncharge=' . Auth::user()->fullname . '"]'
                 ]);
+
+                Log::info(Auth::user()->fullname . '('. Auth::user()->userOffice->description .')' . ' Received the Transaction with Tracking No. ' . $request->tracking_number);
+                return redirect()->to(route('service.incoming'))->with('success', 'Successfully received the document');
 
             } else if ($currentRecord->status === 'received') {
                 // if((int)$index_checker->forwarded_by != $currentRecord->service_index){
@@ -260,6 +275,12 @@ class ServiceController extends Controller
                         $nextRecord->received_by = Auth::user()->id;
                         $nextRecord->save(['timestamps' => false]);
 
+                        if($currentRecord->avail_by->phone_number != null){
+                            $phoneNumber = $currentRecord->avail_by->phone_number;
+                        }else{
+                            $phoneNumber = $currentRecord->phone_number;
+                        }
+
                         // receive docs with status of forwarded
                         $client = new CurlHttpClient(['verify_peer' => false, 'verify_host' => false]);
                         $response = $client->request('GET', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&t=N8hyd6w');
@@ -270,9 +291,11 @@ class ServiceController extends Controller
                         $client->request('POST', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&sid='.$clientID, ['body' => '40']);
                         $client->request('GET', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&sid='.$clientID);
                         $client->request('POST', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&sid='.$clientID, [
-                            'body' => '42["docRecForwarded", "contact_number='.$currentRecord->avail_by->phone_number.'&trackingNumber=' .$request->tracking_number.'&userIncharge=' . Auth::user()->fullname . '"]'
+                            'body' => '42["docRecForwarded", "contact_number='.$phoneNumber.'&trackingNumber=' .$request->tracking_number.'&userIncharge=' . Auth::user()->fullname . '"]'
                         ]);
                    });
+                   Log::info(Auth::user()->fullname . '('. Auth::user()->userOffice->description .')' . ' Received the Transaction with Tracking No. ' . $request->tracking_number);
+                   return redirect()->to(route('service.incoming'))->with('success', 'Successfully received the document');
                 }else{
                     // same service index
                     DB::transaction(function () use ($trackings, $currentRecord, $request) {
@@ -286,6 +309,12 @@ class ServiceController extends Controller
                         $nextRecord->received_by = Auth::user()->id;
                         $nextRecord->save(['timestamps' => false]);
 
+                        if($currentRecord->avail_by->phone_number != null){
+                            $phoneNumber = $currentRecord->avail_by->phone_number;
+                        }else{
+                            $phoneNumber = $currentRecord->phone_number;
+                        }
+
                         // receive docs with status of forwarded
                         $client = new CurlHttpClient(['verify_peer' => false, 'verify_host' => false]);
                         $response = $client->request('GET', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&t=N8hyd6w');
@@ -296,13 +325,15 @@ class ServiceController extends Controller
                         $client->request('POST', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&sid='.$clientID, ['body' => '40']);
                         $client->request('GET', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&sid='.$clientID);
                         $client->request('POST', 'https://surigaodelsur.ph:3030/socket.io/?EIO=4&transport=polling&sid='.$clientID, [
-                            'body' => '42["docRecForwarded", "contact_number='.$currentRecord->avail_by->phone_number.'&trackingNumber=' .$request->tracking_number.'&userIncharge=' . Auth::user()->fullname . '"]'
+                            'body' => '42["released", "contact_number='.$phoneNumber.'&trackingNumber=' .$request->tracking_number.'&userIncharge=' . Auth::user()->fullname . '"]'
                         ]);
                     });
+                    Log::info(Auth::user()->fullname . '('. Auth::user()->userOffice->description .')' . ' Received the Transaction with Tracking No. ' . $request->tracking_number);
+                    return redirect()->to(route('service.for-release'))->with('success', 'Successfully Released the document');
                 }
             }
-            Log::info(Auth::user()->fullname . '('. Auth::user()->userOffice->description .')' . ' Received the Transaction with Tracking No. ' . $request->tracking_number);
-            return redirect()->to(route('service.incoming'))->with('success', 'Successfully received the document');
+
+            // return redirect()->to(route('service.incoming'))->with('success', 'Successfully received the document');
         }
     }
 
@@ -352,6 +383,7 @@ class ServiceController extends Controller
                if ($index == 0) {
                     $user->documents()->attach($service, [
                         'tracking_number' => $trackingNumber,
+                        'phone_number' => $request->phone_number,
                         'service_index' => $process->index,
                         'status' => 'pending',
                         'stage' => 'current',
@@ -364,6 +396,7 @@ class ServiceController extends Controller
 
                $user->documents()->attach($service, [
                     'tracking_number' => $trackingNumber,
+                    'phone_number' => $request->phone_number,
                     'service_index' => $process->index,
                     'status' => 'received',
                     'stage' => 'incoming',
@@ -376,6 +409,7 @@ class ServiceController extends Controller
             if ($service->process->count() == ($index + 1)) {
                 $user->documents()->attach($service, [
                     'tracking_number' => $trackingNumber,
+                    'phone_number' => $request->phone_number,
                     'service_index' => $process->index,
                     'status' => 'last',
                     'stage' => 'incoming',
@@ -429,6 +463,7 @@ class ServiceController extends Controller
 
                    DB::table('user_service')->insert([
                          'tracking_number' => $trackingNumber,
+                         'phone_number' => $previousDocumentLanded->phone_number,
                          'user_id' => $previousDocumentLanded->user_id,
                          'service_id' => $previousDocumentLanded->service_id,
                          'service_index' => $previousDocumentLanded->service_index,
@@ -442,6 +477,7 @@ class ServiceController extends Controller
 
                     DB::table('user_service')->insert([
                          'tracking_number' => $trackingNumber,
+                         'phone_number' => $previousDocumentLanded->phone_number,
                          'user_id' => $previousDocumentLanded->user_id,
                          'service_id' => $previousDocumentLanded->service_id,
                          'service_index' => $previousDocumentLanded->service_index,

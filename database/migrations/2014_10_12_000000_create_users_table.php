@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('phone_number');
+            $table->string('phone_number')->nullable();
             $table->string('position');
             $table->string('office');
             $table->string('profile_picture')->nullable();

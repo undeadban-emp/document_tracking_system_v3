@@ -10,6 +10,23 @@ class UserService extends Pivot
 {
     public $table = 'user_service';
     public $connection = 'doc_tracking';
+    protected $fillable = [
+        'tracking_number',
+        'phone_number',
+        'user_id',
+        'service_id',
+        'service_index',
+        'received_by',
+        'forwarded_by',
+        'forward_to',
+        'returned_by',
+        'returned_to',
+        'manager_id',
+        'remarks',
+        'reasons',
+        'status',
+        'stage'
+    ];
     protected function status(): Attribute
     {
         return Attribute::make(

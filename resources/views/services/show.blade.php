@@ -82,11 +82,12 @@
                <p class="text-dark font-size-16 fw-medium">Description:</p>
                <textarea class="form-control @error('request_description') is-invalid @enderror" rows="5" value="{{ old('request_description') }}" name="request_description"></textarea>
                 @error('request_description')
-                
                     <span class="invalid-feedback" role="alert">
                         {{ $message }}
                     </span>
                 @enderror
+                <p class="text-dark font-size-16 pt-2 fw-medium">Phone Number: (optional)</p>
+                <input class="form-control" name="phone_number" type="number" pattern="^[0-9]*$">
                <p class='text-dark font-size-16 fw-medium pt-3'>Attach Requirements: </p>
                @foreach($service->requirements as $requirement)
                <div class="row">
@@ -103,7 +104,7 @@
                                    {{ $requirement->description }}</label>
                          </div>
                     </div>
-                   
+
                </div>
                @endforeach
 

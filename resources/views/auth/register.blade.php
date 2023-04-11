@@ -149,7 +149,7 @@
 
                         <div class="form-group mb-3">
                             <label for="phone_number">{{ __('Phone Number') }} <span class="text-danger">*</span></label>
-                            <input id="phone_number" type="text" class="input_field1 form-control @error('phone_number') is-invalid @enderror" name="phone_number" value="{{ old('phone_number') }}">
+                            <input id="phone_number" type="text" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number" value="{{ old('phone_number') }}">
                             <p id="phone-number-error"></p>
                             @error('phone_number')
                                 <span class="invalid-feedback" role="alert">
@@ -247,10 +247,10 @@ $(function(){
                             $('#office').addClass("is-invalid");
                             $('#office-error').html("Office is Required!").css('color', 'red');
                         }
-                        if($('#phone_number').val() == ''){
-                            $('#phone_number').addClass("is-invalid");
-                            $('#phone-number-error').html("Phone Number is Required!").css('color', 'red');
-                        }
+                        // if($('#phone_number').val() == ''){
+                        //     $('#phone_number').addClass("is-invalid");
+                        //     $('#phone-number-error').html("Phone Number is Required!").css('color', 'red');
+                        // }
                     }
 
                 }

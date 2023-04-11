@@ -29,7 +29,7 @@ class UserAccountSettingCotroller extends Controller
             'suffix'                        =>      ['sometimes', 'nullable', 'string', 'max:255'],
             'position'                      =>      ['sometimes', 'required'],
             'office'                        =>      ['sometimes', 'required'],
-            'phone_number'                  =>      ['sometimes', 'required', new PhoneNumber],
+            // 'phone_number'                  =>      ['sometimes', 'required', new PhoneNumber],
             'profile_picture'               =>      ['sometimes', 'mimes:png,jpg,jpeg', 'max:2048'],
             'email'                         =>      ['sometimes', 'required', 'string', 'email', 'max:255', 'unique:users,email,' . Auth::id()],
             'current_password'              =>      ['sometimes', 'required', new MatchOldPassword],

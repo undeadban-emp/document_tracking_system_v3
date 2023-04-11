@@ -87,8 +87,8 @@
                          Reason/s : <span class='text-danger fw-bold'>{{ $service->reasons }}</span>
                     </p>
                     <hr>
-          
-                    
+
+
                </div>
                <div class="col-6">
                     <p class='text-dark font-size-16 fw-medium'>Attachments: </p>
@@ -118,15 +118,15 @@
                                         <input type="file" class="form-control" name="attachments[]" value="">
                                         <label class="input-group-text">{{ $loop->index + 1 }}.
                                              {{ $requirement->description }}</label>
-                                   </div> 
+                                   </div>
                               </div>
                          </div>
                          @endforeach
                          <div class="float-end">
-                              <button type="submit" class='btn btn-success btn-lg shadow'>Re-apply</button>
+                              <button id="reapply" type="submit" class='btn btn-success btn-lg shadow'>Re-apply</button>
                          </div>
                     </form>
-          
+
                </div>
           </div>
      </div>
@@ -141,6 +141,13 @@
                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           }
      });
+
+    $('#reapply').click(function() {
+        function delayFunc(){
+            $('#reapply').prop('disabled', true);
+        }
+        setTimeout(delayFunc, 100);
+    });
 
 </script>
 

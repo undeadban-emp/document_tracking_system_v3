@@ -59,7 +59,7 @@ class RegisterController extends Controller
             'suffix' => ['nullable', 'string', 'max:255'],
             'position' => ['required'],
             'office' => ['required'],
-            'phone_number' => ['required', 'unique:users,phone_number', new PhoneNumber],
+            'phone_number' => ['nullable','unique:users,phone_number', new PhoneNumber],
             'role' => ['required'],
             'username' => ['required', 'string', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
