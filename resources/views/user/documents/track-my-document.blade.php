@@ -110,8 +110,11 @@
 
                                             <i class="fas fa-arrow-right"></i>
 
-                                            {{ $service->name }} {{ $document_logs->request_description }} - <span class='text-uppercase font-size-15 fw-bold'>{{ Str::upper($document_logs->status) == 'LAST' ? 'Released' : $document_logs->status }} </span>
-
+                                            @if($document_logs->received_by_user?->fullname == null)
+                                                {{ $service->name }} {{ $document_logs->request_description }} - <span class='text-uppercase font-size-15 fw-bold'>{{ Str::upper($document_logs->status) == 'LAST' ? 'Released By Admin' : 'Skip' }} </span>
+                                            @else
+                                                {{ $service->name }} {{ $document_logs->request_description }} - <span class='text-uppercase font-size-15 fw-bold'>{{ Str::upper($document_logs->status) == 'LAST' ? 'Released' : $document_logs->status }} </span>
+                                            @endif
 
                                             @if(Str::upper($document_logs->status) === 'RECEIVED')
                                                 @if($document_logs->received_by_user?->fullname == null)

@@ -163,6 +163,7 @@
         $('#logs-table-liaison').DataTable({
             processing: true,
             serverSide: true,
+            order: [[0, 'desc']],
             ajax: "{{ route('logs.list.liaison') }}",
             columns: [
                 {

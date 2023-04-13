@@ -32,20 +32,20 @@ svg {
   font-weight: 300;
 }
 .message-box h1 {
-  font-size: 60px;
-  line-height: 46px;
+  font-size: 160px;
+  line-height: 146px;
   margin-bottom: 40px;
 }
 .buttons-con .action-link-wrap {
-  margin-top: 40px;
+  margin-top: 50px;
 }
 .buttons-con .action-link-wrap a {
   background: #68c950;
-  padding: 8px 25px;
+  padding: 32px 70px;
   border-radius: 4px;
   color: #FFF;
   font-weight: bold;
-  font-size: 30px;
+  font-size: 35px;
   transition: all 0.3s linear;
   cursor: pointer;
   text-decoration: none;
@@ -107,7 +107,7 @@ svg {
         </svg>
         <div class="message-box">
           <h1>404</h1>
-          <p>Page not found</p>
+          <p style="font-size:40px;">Page not found</p>
           <div class="buttons-con">
             <div class="action-link-wrap">
                 <a href="{{ route('service.incoming') }}">Back to Home</a>

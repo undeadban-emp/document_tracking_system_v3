@@ -122,6 +122,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('list-of-transaction/list/all/{officeCode}/{status}', [ListOfTransactionController::class, 'listOfTransaction']);
         Route::get('document/{transactionCode}/{serviceID}', [ListOfTransactionController::class, 'show']);
         Route::post('document/end/{trackingNumber}', [ListOfTransactionController::class, 'end']);
+
+        Route::post('document/skip/{trackingNumber}', [ListOfTransactionController::class, 'skip'])->name('skip.transaction');
+
         Route::delete('document/delete/{trackingNumber}', [ListOfTransactionController::class, 'destroy']);
 
         Route::get('service-process-scan/{serviceID}', function ($serviceID) {

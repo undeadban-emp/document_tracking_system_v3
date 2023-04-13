@@ -75,14 +75,22 @@
 
                                 <i class="fas fa-arrow-right"></i>
 
-                                {{ $serviceName }} {{ $document_logs->request_description }} - <span class='text-uppercase font-size-15 fw-bold'>{{ Str::upper($document_logs->status) == 'LAST' ? 'Released' : $document_logs->status }} </span>
+                                @if($document_logs->received_by_user?->fullname == null)
+                                {{ $serviceName }} {{ $document_logs->request_description }} - <span class='text-uppercase font-size-15 fw-bold'>{{ Str::upper($document_logs->status) == 'LAST' ? 'Released By Admin' : 'Skip' }} </span>
+                                @else
+                                    {{ $serviceName }} {{ $document_logs->request_description }} - <span class='text-uppercase font-size-15 fw-bold'>{{ Str::upper($document_logs->status) == 'LAST' ? 'Released' : $document_logs->status }} </span>
+                                @endif
 
 
                                 @if(Str::upper($document_logs->status) === 'RECEIVED')
-                                <span class=''>by {{ Str::upper($document_logs->received_by_user->fullname) }}</span>
+                                @if($document_logs->received_by_user?->fullname == null)
+                                    <span class=''>by <b>Admin</b></span>
+                                @else
+                                    <span class=''>by {{ Str::upper($document_logs->received_by_user?->fullname) }}</span>
+                                @endif
                                 @elseif(Str::upper($document_logs->status) === 'FORWARDED')
                                 {{-- <span class=''>by {{ Str::upper($document_logs) }}</span> --}}
-                                <span class=''>by {{ Str::upper($document_logs->forwarded_by_user->fullname) }}</span>
+                                <span class=''>by {{ Str::upper($document_logs->forwarded_by_user?->fullname) }}</span>
                                 @elseif(Str::upper($document_logs->status) === 'RETURNED')
                                 <span class='fw-bold'>by {{ Str::upper($document_logs->returnee->fullname) }} <span class='fw-normal'>to</span>
                                      @if($document_logs->return_to->id == Auth::user()->id)
@@ -108,11 +116,10 @@
                          </div>
                     </div>
                     @endforeach
-                    @if($check != null)
+
                         <div class="timeline-breaker text-center timeline-breaker-middle">
                             <div>End</div>
                         </div>
-                    @endif
 
                </>
           </div>

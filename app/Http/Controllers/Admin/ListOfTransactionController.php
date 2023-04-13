@@ -9,9 +9,12 @@ use App\Models\Office;
 use App\Models\Upload;
 use App\Models\Service;
 use App\Models\UserService;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpClient\CurlHttpClient;
 
 class ListOfTransactionController extends Controller
 {
@@ -121,6 +124,7 @@ class ListOfTransactionController extends Controller
      */
     public function show($transactionCode, $documentID)
     {
+        $checker = UserService::where('tracking_number', $transactionCode)->where('status', 'last')->first();
         $userID = Auth::user()->id;
         $service = Service::with(['process'])->find($documentID);
         $logs = UserService::with(['receiver', 'receiver.user', 'forwarded_by_user', 'forwarded_to_user'])
@@ -182,7 +186,7 @@ class ListOfTransactionController extends Controller
         ->where('status', 'last')
         ->where('stage', 'passed')
         ->first();
-        return view('admin.list-of-transaction.show', compact('service',  'userID','resultAll', 'transactionCode', 'description', 'serviceName', 'process', 'logs', 'check', 'logTime'));
+        return view('admin.list-of-transaction.show', compact('service',  'userID','resultAll', 'transactionCode', 'description', 'serviceName', 'process', 'logs', 'check', 'logTime', 'checker'));
     }
 
     /**
@@ -225,4 +229,58 @@ class ListOfTransactionController extends Controller
         UserService::where('tracking_number', $trackingNumber)->update(['stage'=>'passed']);
         return response('success');
     }
+
+
+
+
+
+    public function skip(Request $request, $trackingNumber)
+    {
+           $currentRecord = UserService::where('tracking_number', $trackingNumber)->where('stage', 'current')->first();
+           $trackings = UserService::where('tracking_number', $trackingNumber)->orderBy('id', 'ASC')->get();
+           $index_checker = UserService::where('tracking_number', $trackingNumber)->where('status', 'last')->first();
+           if ($currentRecord->status === 'pending') {
+               // Look for the next received update the current to passed then change the status of next record to current.
+               DB::transaction(function () use ($trackings, $currentRecord) {
+                   $currentRecord->updated_at;
+                   $nextRecord = $trackings->where('service_index', '=', $currentRecord->service_index)->where('status', 'received')->where('stage', 'incoming')->where('stage', 'incoming')->first();
+                   $nextRecord->stage = 'current';
+                   $nextRecord->forwarded_by = null;
+                   $currentRecord->stage = 'passed';
+                   $currentRecord->timestamps = false;
+                   $currentRecord->save();
+                   $nextRecord->save(['timestamps' => false]);
+               });
+               return back()->with('success', 'Successfully Skip Transaction');
+           } else if ($currentRecord->status === 'received') {
+               if($index_checker->service_index != $currentRecord->service_index){
+                   // check service index if same
+                   DB::transaction(function () use ($trackings, $currentRecord, $request) {
+                       $currentRecord->updated_at;
+                       $nextRecord = $trackings->where('service_index', '=', ($currentRecord->service_index + 1))->where('status', 'received')->where('stage', 'incoming')->first();
+                       $nextRecord->stage = 'current';
+                       $nextRecord->forwarded_by = null;
+                       $currentRecord->stage = 'passed';
+                       $currentRecord->timestamps = false;
+                       $currentRecord->save();
+                       $nextRecord->save(['timestamps' => false]);
+                  });
+                  return back()->with('success', 'Successfully Skip Transaction');
+               }else{
+                   // same service index
+                   DB::transaction(function () use ($trackings, $currentRecord, $request) {
+                       $currentRecord->updated_at;
+                       $nextRecord = $trackings->where('service_index', '=', $currentRecord->service_index)->where('status', 'last')->where('stage', 'incoming')->first();
+                       $nextRecord->stage = 'passed';
+                       $nextRecord->forwarded_by = null;
+                       $currentRecord->stage = 'passed';
+                       $currentRecord->timestamps = false;
+                       $currentRecord->save();
+                       $nextRecord->save(['timestamps' => false]);
+                   });
+                   return back()->with('success', 'Successfully Skip Transaction');
+               }
+           }
+   }
+
 }

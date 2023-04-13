@@ -157,7 +157,7 @@ class UserDocumentController extends Controller
                         array_push($result, $diffSeconds);
                     }
                 }
-                
+
             }
             foreach($result as $results){
                 $totalSec = $totalSec + $results;
@@ -196,6 +196,11 @@ class UserDocumentController extends Controller
 
         Upload::where('transaction_code', $trackingNumber)->get()->each->delete();
         // return back()->with('success', 'Successfully cancel all the process of your document');
+        return response('success');
+    }
+    public function end(string $trackingNumber)
+    {
+        UserService::where('tracking_number', $trackingNumber)->update(['received_by' => Auth::user()->id,'stage'=>'passed']);
         return response('success');
     }
 }

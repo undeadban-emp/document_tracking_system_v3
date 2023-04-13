@@ -159,52 +159,6 @@ class ServiceController extends Controller
             return view('services.received', compact('service', 'dateApplied', 'responsibles', 'attachedRequirements', 'trackingNumber'));
 
         }
-        // public function received(Request $request, $transactionCode)
-        // {
-        //         // $service = UserService::with(['information', 'information.process', 'information.process.user'])->where('tracking_number', $transactionCode)->where('stage', 'current')->first();
-        //         $service = UserService::with(['manager_users', 'information', 'information.process', 'information.requirements'])->where('tracking_number', $transactionCode)->where('stage', 'current')->first();
-
-
-        //         if (is_null($service)) {
-        //             return redirect()->to(route('home'));
-        //         }
-
-        //         foreach($service->manager_users as $services){
-
-        //             if ($services->user_id != Auth::user()->id) {
-        //                     $isAbort = true;
-        //                     $isDoubleCheck = true;
-        //             } else {
-        //                     $isDoubleCheck = false;
-        //             }
-        //         }
-
-        //         $isAbort = false;
-        //         $isDoubleCheck = false;
-        //         if ($isDoubleCheck) {
-        //             if (!is_null($service->forward_to) && $service->forward_to != Auth::user()->id) {
-        //                 $isAbort = true;
-        //             } else {
-        //                 $isAbort = false;
-        //             }
-        //         }
-        //         if ($isAbort) {
-        //             abort(404);
-        //         }
-
-        //     $dateApplied = $service->created_at;
-
-        //     $trackingNumber = $transactionCode;
-
-        //     $responsibles = $service->information->process->where('index', '<', $service->service_index);
-
-        //     $attachedRequirements = Upload::where('transaction_code', $trackingNumber)->get();
-
-        //     return view('services.received', compact('service', 'dateApplied', 'responsibles', 'attachedRequirements', 'trackingNumber'));
-
-        // }
-
-
 
     // function of receive forward release
      public function documentReceived(Request $request, $trackingNumber)

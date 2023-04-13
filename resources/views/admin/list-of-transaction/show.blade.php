@@ -23,6 +23,16 @@
                     <br>
                     <small>({{ $description }})</small>
                </h5>
+                @if ($checker->stage != 'passed')
+                    <form action="{{ route('admin.skip.transaction', $transactionCode) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="col-12 pb-5">
+                                <button type="submit" class="btn btn-primary float-right">Skip 1</button>
+                            </div>
+                    </form>
+                @endif
+
+
                <hr class="hr-lg mt-0 mb-2 w-10 mx-auto hr-primary">
                <div class="timeline timeline-left mx-lg-10">
                     <div style="border-radius:5px;" class="timeline-breaker">User
@@ -64,7 +74,7 @@
                               @endif
                               @if($document_logs->status != 'pending')
 
-                              <li @class([ 'h6' , 'p-2' , 'bg-success text-white'=> $document_logs->stage === 'current',
+                              <li @class([ 'h6' , 'p-2' , 'bg-primary text-white'=> $document_logs->stage === 'current',
                                 'text-dark'
                                 ])
                                 >
@@ -77,7 +87,11 @@
 
                                 <i class="fas fa-arrow-right"></i>
 
-                                {{ $serviceName }} {{ $document_logs->request_description }} - <span class='text-uppercase font-size-15 fw-bold'>{{ Str::upper($document_logs->status) == 'LAST' ? 'Released' : $document_logs->status }} </span>
+                                @if($document_logs->received_by_user?->fullname == null)
+                                {{ $serviceName }} {{ $document_logs->request_description }} - <span class='text-uppercase font-size-15 fw-bold'>{{ Str::upper($document_logs->status) == 'LAST' ? 'Released By Admin' : 'Skip' }} </span>
+                                @else
+                                    {{ $serviceName }} {{ $document_logs->request_description }} - <span class='text-uppercase font-size-15 fw-bold'>{{ Str::upper($document_logs->status) == 'LAST' ? 'Released' : $document_logs->status }} </span>
+                                @endif
 
 
                                 @if(Str::upper($document_logs->status) === 'RECEIVED')
@@ -110,11 +124,10 @@
                          </div>
                     </div>
                     @endforeach
-                    @if($check != null)
-                        <div class="timeline-breaker text-center timeline-breaker-middle">
+
+                        <div style="border-radius:5px;" class="timeline-breaker text-center timeline-breaker-middle">
                             <div>End</div>
                         </div>
-                    @endif
 
                </>
           </div>
