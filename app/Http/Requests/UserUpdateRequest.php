@@ -34,7 +34,7 @@ class UserUpdateRequest extends FormRequest
             'suffix' => ['sometimes', 'nullable', 'string', 'max:255'],
             'position' => ['sometimes', 'required'],
             'office' => ['sometimes', 'required'],
-            'phone_number' => ['nullable', 'required', new PhoneNumber,],
+            'phone_number' => ['sometimes', 'nullable', new PhoneNumber,],
             // 'email' => ['sometimes', 'required', 'string', 'email', 'max:255', 'unique:users,email,' . $this->user->id],
             'username' => ['required', Rule::unique('users')->ignore($this->user->id)],
             'password' => ['sometimes', 'required', 'string', 'min:8', 'confirmed'],
