@@ -31,7 +31,7 @@ class UserStoreRequest extends FormRequest
             'suffix' => ['nullable', 'string', 'max:255'],
             'position' => ['required'],
             'office' => ['required'],
-            'phone_number' => ['required', 'unique:users,phone_number', new PhoneNumber],
+            'phone_number' => ['nullable', 'unique:users,phone_number', new PhoneNumber],
             'username' => ['required', 'unique:users,username'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'accountRole' => ['required'],

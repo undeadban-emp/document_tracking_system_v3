@@ -97,7 +97,7 @@ class UserController extends Controller
             'suffix' => $request['suffix'],
             'position' => $request['position'],
             'office' => $request['office'],
-            // 'phone_number' => $request['phone_number'],
+            'phone_number' => $request['phone_number'],
             'username' => $request['username'],
             'password' => bcrypt($request['password']),
             'status'    =>  'approved',
