@@ -20,12 +20,33 @@ class AccountSettingController extends Controller
         $this->middleware('auth:admin');
     }
 
-    protected function validator(array $data)
+    // protected function validator(array $data)
+    // {
+    //     return Validator::make($data, [
+    //         'name'                  =>      ['sometimes', 'required', 'string', 'max:255'],
+    //         'email'                 =>      ['sometimes', 'required', 'string', 'email', 'max:255', 'unique:admins,email,' . Auth::id()],
+    //         'username'              =>      ['sometimes', 'required', 'string', 'max:255', 'unique:admins,username' . Auth::id()],
+    //         'current_password'      =>      ['sometimes', 'required', new MatchOldPassword],
+    //         'password'              =>      ['sometimes', 'required', 'string', 'min:8', 'confirmed'],
+    //     ]);
+    // }
+    protected function validatorProfile(array $data)
     {
         return Validator::make($data, [
             'name'                  =>      ['sometimes', 'required', 'string', 'max:255'],
             'email'                 =>      ['sometimes', 'required', 'string', 'email', 'max:255', 'unique:admins,email,' . Auth::id()],
+        ]);
+    }
+
+    protected function validatorUsername(array $data)
+    {
+        return Validator::make($data, [
             'username'              =>      ['sometimes', 'required', 'string', 'max:255', 'unique:admins,username' . Auth::id()],
+        ]);
+    }
+    protected function validatorPassword(array $data)
+    {
+        return Validator::make($data, [
             'current_password'      =>      ['sometimes', 'required', new MatchOldPassword],
             'password'              =>      ['sometimes', 'required', 'string', 'min:8', 'confirmed'],
         ]);
@@ -40,7 +61,9 @@ class AccountSettingController extends Controller
     public function update(Request $request)
     {
         if ($request->has('type')) {
-            $this->validator($request->all())->validate();
+            // dd('asd');
+            // $this->validatorProfile($request->all())->validate();
+
 
             if ($request->type === "profile") {
                 $this->updateProfile($request->all());
@@ -89,6 +112,7 @@ class AccountSettingController extends Controller
 
     protected function updateUsername(array $data)
     {
+
         $user  = Admin::find(Auth::id());
         $user->username = $data['username'];
         $user->save();
