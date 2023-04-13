@@ -89,43 +89,82 @@ class UserDocumentController extends Controller
             ->orderBy('updated_at', 'ASC')
             ->get(['tracking_number','status', 'updated_at', 'service_index'])->groupBy('service_index');
 
+        $datetimeString = '';
         $resultAll = [];
-        $asd = '';
+        $previous_date = '';
+        $result = [];
+        $totalSec = 0;
         foreach($logTime as $keys => $logDatetime){
-            $previous_date = '';
-            $result = [];
-            $count = count($logDatetime);
-            $totalSec = 0;
-            $keynodisapproved = '';
-            foreach($logDatetime as $key => $log){
-                if($key == 0){
-                    $previous_date = $log->updated_at;
-                    if($count == 1){
-                        array_push($resultAll, '');
+            $count_logDatetime = count($logDatetime);
+            if($keys == 1){
+                if($count_logDatetime > 1){
+                    foreach($logDatetime as $key => $log){
+                        if(($count_logDatetime - 1) == $key){
+                            $datetimeString .= $log->updated_at;
+                        }else{
+                            $datetimeString .= $log->updated_at.'|';
+                        }
                     }
                 }else{
-                    if($log->status == 'returned'){
-                        $keynodisapproved = $key + 1;
-                    }else if($keynodisapproved == $key){
-                        $keynodisapproved = '';
+                    foreach($logDatetime as $key => $log){
+                        $datetimeString .= $log->updated_at;
+                    }
+                }
+            }else{
+                if($count_logDatetime > 1){
+                    foreach($logDatetime as $key => $log){
+                        if($key == 0){
+                            $datetimeString .= '|'.$log->updated_at.'#'.$log->updated_at;
+                        }else{
+                            $datetimeString .= '|'.$log->updated_at;
+                        }
+                    }
+                }else{
+                    foreach($logDatetime as $key => $log){
+                        $datetimeString .= '|'.$log->updated_at.'#'.$log->updated_at;
+                    }
+                }
+            }
+        }
+        $datetimePerArray = explode("#",$datetimeString);
+        foreach($datetimePerArray as $keys => $datetimePerArrays){
+            $datetimeindividual = explode("|",$datetimePerArrays);
+            $count_datetimeindividual = count($datetimeindividual) - 1;
+            foreach($datetimeindividual as $key => $datetimeindividuals){
+                if($count_datetimeindividual%2==0){
+                    if($key%2==0){
+                        if($count_datetimeindividual == $key){
+                            $dateConverted = Carbon::parse($datetimeindividuals);
+                            $dateConverted2 = Carbon::parse($datetimeindividuals);
+                            $diffSeconds = ($dateConverted)->diffInSeconds($dateConverted2);
+                            array_push($result, $diffSeconds);
+                        }else{
+                            $previous_date = $datetimeindividuals;
+                        }
                     }else{
-                        $dateConverted = Carbon::parse($log->updated_at);
+                        $dateConverted = Carbon::parse($datetimeindividuals);
                         $dateConverted2 = Carbon::parse($previous_date);
                         $diffSeconds = ($dateConverted)->diffInSeconds($dateConverted2);
                         array_push($result, $diffSeconds);
                     }
-                    if($count == $key + 1){
-                        foreach($result as $results){
-                            $totalSec = $totalSec + $results;
-                        }
-                        array_push($resultAll, $totalSec);
+                }else{
+                    if($key%2==0){
+                        $previous_date = $datetimeindividuals;
+                    }else{
+                        $dateConverted = Carbon::parse($datetimeindividuals);
+                        $dateConverted2 = Carbon::parse($previous_date);
+                        $diffSeconds = ($dateConverted)->diffInSeconds($dateConverted2);
+                        array_push($result, $diffSeconds);
                     }
-                    $previous_date = $log->updated_at;
                 }
-                // if($keys == 2 && $key == 0){
-                //     $asd = $result;
-                // }
+                
             }
+            foreach($result as $results){
+                $totalSec = $totalSec + $results;
+            }
+            array_push($resultAll, $totalSec);
+            $result = [];
+            $totalSec = 0;
         }
         $serviceName = $service->name;
         $description = $service->description;
@@ -157,12 +196,6 @@ class UserDocumentController extends Controller
 
         Upload::where('transaction_code', $trackingNumber)->get()->each->delete();
         // return back()->with('success', 'Successfully cancel all the process of your document');
-        return response('success');
-    }
-
-    public function end(string $trackingNumber)
-    {
-        UserService::where('tracking_number', $trackingNumber)->update(['received_by' => Auth::user()->id,'stage'=>'passed']);
         return response('success');
     }
 }
