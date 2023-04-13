@@ -76,10 +76,18 @@
                         data: 'action',
                         name: 'action',
                         render : function (_, _, data, row) {
-                            return `
-                            <a href='{{ url('/admin/document/${data[0].tracking_number}/${data[0].service_id}') }}' class=' text-white edit btn btn-success '>Track</a>
-                            <button class="text-white edit btn btn-danger" value="${data[0].tracking_number}" id="delete">Delete</button>
-                            `;
+                            if(data[0].stage != 'passed'){
+                                return `
+                                <a href='{{ url('/admin/document/${data[0].tracking_number}/${data[0].service_id}') }}' class=' text-white edit btn btn-success '>Track</a>
+                                <button class="text-white edit btn btn-secondary" value="${data[0].tracking_number}" id="end">End</button>
+                                <button class="text-white edit btn btn-danger" value="${data[0].tracking_number}" id="delete">Delete</button>
+                                `;
+                            }else{
+                                return `
+                                <a href='{{ url('/admin/document/${data[0].tracking_number}/${data[0].service_id}') }}' class=' text-white edit btn btn-success '>Track</a>
+                                <button class="text-white edit btn btn-danger" value="${data[0].tracking_number}" id="delete">Delete</button>
+                                `;
+                            }
                         },
                     },
                 ]
@@ -130,6 +138,37 @@
                                 swal("Cancelled", "", "error");
                             }
                         });
+                });
+
+                $(document).on("click", "#end", function() {
+                let id = $(this).attr("value");
+                swal({
+                        title: "Are you sure you want to End Transaction?"
+                        , text: ""
+                        , icon: "warning"
+                        , buttons: true
+                        , dangerMode: true
+                    , })
+                    .then((willEnd) => {
+                        if (willEnd) {
+                            $.ajax({
+                                url: `{{ url('/admin/document/end/${id}') }}`
+                                , type: "POST"
+                                , cache: false
+                                , success: function(success) {
+                                    if (success) {
+                                        $('#listTransaction').DataTable().ajax.reload();
+                                        swal({
+                                            icon: 'success'
+                                            , text: 'Successfully Ended Transaction!'
+                                        , });
+                                    }
+                                }
+                            });
+                        } else {
+                            swal("Cancelled", "", "error");
+                        }
+                    });
                 });
     });
 </script>

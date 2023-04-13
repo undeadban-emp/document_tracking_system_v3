@@ -159,4 +159,10 @@ class UserDocumentController extends Controller
         // return back()->with('success', 'Successfully cancel all the process of your document');
         return response('success');
     }
+
+    public function end(string $trackingNumber)
+    {
+        UserService::where('tracking_number', $trackingNumber)->update(['received_by' => Auth::user()->id,'stage'=>'passed']);
+        return response('success');
+    }
 }

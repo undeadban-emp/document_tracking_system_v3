@@ -220,4 +220,9 @@ class ListOfTransactionController extends Controller
         Upload::where('transaction_code', $trackingNumber)->get()->each->delete();
         return response('success');
     }
+    public function end(string $trackingNumber)
+    {
+        UserService::where('tracking_number', $trackingNumber)->update(['stage'=>'passed']);
+        return response('success');
+    }
 }

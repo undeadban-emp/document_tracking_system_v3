@@ -119,37 +119,32 @@ class ServiceController extends Controller
         //  open receive file
         public function received(Request $request, $transactionCode)
         {
-                // $service = UserService::with(['information', 'information.process', 'information.process.user'])->where('tracking_number', $transactionCode)->where('stage', 'current')->first();
-                $service = UserService::with(['manager_users', 'information', 'information.process', 'information.requirements'])->where('tracking_number', $transactionCode)->where('stage', 'current')->first();
+            //   $service = UserService::with(['information', 'information.process', 'information.process.user'])->where('tracking_number', $transactionCode)->where('stage', 'current')->first();
+            $service = UserService::with(['manager_users', 'information', 'information.process', 'information.requirements'])->where('tracking_number', $transactionCode)->where('stage', 'current')->first();
 
 
-                if (is_null($service)) {
-                    return redirect()->to(route('home'));
-                }
-
-                foreach($service->manager_users as $services){
-
-                if ($services->user_id != Auth::user()->id) {
-                        $isAbort = true;
-                        $isDoubleCheck = true;
-                } else {
-                        $isDoubleCheck = false;
-                }
-                }
-                $isAbort = false;
-                $isDoubleCheck = false;
-                if ($isDoubleCheck) {
-                    if (!is_null($service->forward_to) && $service->forward_to != Auth::user()->id) {
-                        $isAbort = true;
-                    } else {
-                        $isAbort = false;
-                    }
+            if (is_null($service)) {
+                return redirect()->to(route('home'));
             }
 
+            $isAbort1 = 0;
+            $isAbort2 = 0;
 
+            foreach($service->manager_users as $services){
+                if ($services->user_id != Auth::user()->id) {
+                        $isAbort1 += 1;
+                        $isDoubleCheck = true;
+                }else{
+                    $isAbort1 = 0;
+                }
+            }
+            if (!is_null($service->forward_to) && $service->forward_to != Auth::user()->id) {
+                $isAbort2 += 1;
+            } else {
+                $isAbort2 = 0;
+            }
 
-
-            if ($isAbort) {
+            if ($isAbort1 > 0 && $isAbort2 > 0) {
                 abort(404);
             }
 
@@ -164,6 +159,50 @@ class ServiceController extends Controller
             return view('services.received', compact('service', 'dateApplied', 'responsibles', 'attachedRequirements', 'trackingNumber'));
 
         }
+        // public function received(Request $request, $transactionCode)
+        // {
+        //         // $service = UserService::with(['information', 'information.process', 'information.process.user'])->where('tracking_number', $transactionCode)->where('stage', 'current')->first();
+        //         $service = UserService::with(['manager_users', 'information', 'information.process', 'information.requirements'])->where('tracking_number', $transactionCode)->where('stage', 'current')->first();
+
+
+        //         if (is_null($service)) {
+        //             return redirect()->to(route('home'));
+        //         }
+
+        //         foreach($service->manager_users as $services){
+
+        //             if ($services->user_id != Auth::user()->id) {
+        //                     $isAbort = true;
+        //                     $isDoubleCheck = true;
+        //             } else {
+        //                     $isDoubleCheck = false;
+        //             }
+        //         }
+
+        //         $isAbort = false;
+        //         $isDoubleCheck = false;
+        //         if ($isDoubleCheck) {
+        //             if (!is_null($service->forward_to) && $service->forward_to != Auth::user()->id) {
+        //                 $isAbort = true;
+        //             } else {
+        //                 $isAbort = false;
+        //             }
+        //         }
+        //         if ($isAbort) {
+        //             abort(404);
+        //         }
+
+        //     $dateApplied = $service->created_at;
+
+        //     $trackingNumber = $transactionCode;
+
+        //     $responsibles = $service->information->process->where('index', '<', $service->service_index);
+
+        //     $attachedRequirements = Upload::where('transaction_code', $trackingNumber)->get();
+
+        //     return view('services.received', compact('service', 'dateApplied', 'responsibles', 'attachedRequirements', 'trackingNumber'));
+
+        // }
 
 
 

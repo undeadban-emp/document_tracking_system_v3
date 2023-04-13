@@ -79,10 +79,14 @@
 
 
                                 @if(Str::upper($document_logs->status) === 'RECEIVED')
-                                <span class=''>by {{ Str::upper($document_logs->received_by_user->fullname) }}</span>
+                                    @if($document_logs->received_by_user?->fullname == null)
+                                        <span class=''>by <b>Admin</b></span>
+                                    @else
+                                        <span class=''>by {{ Str::upper($document_logs->received_by_user?->fullname) }}</span>
+                                    @endif
                                 @elseif(Str::upper($document_logs->status) === 'FORWARDED')
                                 {{-- <span class=''>by {{ Str::upper($document_logs) }}</span> --}}
-                                <span class=''>by {{ Str::upper($document_logs->forwarded_by_user->fullname) }}</span>
+                                <span class=''>by {{ Str::upper($document_logs->forwarded_by_user?->fullname) }}</span>
                                 @elseif(Str::upper($document_logs->status) === 'RETURNED')
                                 <span class='fw-bold'>by {{ Str::upper($document_logs->returnee->fullname) }} <span class='fw-normal'>to</span>
                                      @if($document_logs->return_to->id == Auth::user()->id)

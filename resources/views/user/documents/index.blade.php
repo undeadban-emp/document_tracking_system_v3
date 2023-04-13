@@ -52,6 +52,7 @@
                             return `
                             <a href='{{ url('/user/document/${data[0].tracking_number}/${data[0].service_id}') }}' class=' text-white edit btn btn-success '>Track</a>
                             <a href='{{ url('/print-qr/${data[0].tracking_number}') }}' class=' text-white edit btn btn-primary '>Qr Code</a>
+                            <button class="text-white edit btn btn-secondary" value="${data[0].tracking_number}" id="end">End</button>
                             <button class="text-white edit btn btn-danger" value="${data[0].tracking_number}" id="delete">Delete</button>
                             `;
                         },
@@ -98,6 +99,41 @@
                             }
                         });
                 });
+
+
+
+            $(document).on("click", "#end", function() {
+            let id = $(this).attr("value");
+            swal({
+                    title: "Are you sure you want to End Transaction?"
+                    , text: ""
+                    , icon: "warning"
+                    , buttons: true
+                    , dangerMode: true
+                , })
+                .then((willEnd) => {
+                    if (willEnd) {
+                        $.ajax({
+                            url: `{{ url('/user/document/end/${id}') }}`
+                            , type: "POST"
+                            , cache: false
+                            , success: function(success) {
+                                if (success) {
+                                    $('#logs-table-liaison-my-docs').DataTable().ajax.reload();
+                                    swal({
+                                        icon: 'success'
+                                        , text: 'Successfully End Transaction!'
+                                    , });
+                                    let count = parseInt($('#myDocsCount').text());
+                                    let total = $('#myDocsCount').text(count - 1);
+                                }
+                            }
+                        });
+                    } else {
+                        swal("Cancelled", "", "error");
+                    }
+                });
+            });
     });
 </script>
 @endprepend

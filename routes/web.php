@@ -70,6 +70,7 @@ Route::group(['middleware' => ['auth', 'account.approved']], function () {
     Route::get('document/return/{transactionCode}', [UserDocumentController::class, 'edit'])->name('user.document.edit');
 
     Route::delete('user/document/delete/{trackingNumber}', [UserDocumentController::class, 'delete'])->name('user.document.cancel');
+    Route::post('user/document/end/{trackingNumber}', [UserDocumentController::class, 'end']);
 
     Route::get('account', [UserAccountSettingCotroller::class, 'showUserAccountPage'])->name('user.account.settings');
     Route::post('account/update', [UserAccountSettingCotroller::class, 'update'])->name('user.account.settings.update');
@@ -120,6 +121,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::resource('list-of-transaction', ListOfTransactionController::class);
         Route::get('list-of-transaction/list/all/{officeCode}/{status}', [ListOfTransactionController::class, 'listOfTransaction']);
         Route::get('document/{transactionCode}/{serviceID}', [ListOfTransactionController::class, 'show']);
+        Route::post('document/end/{trackingNumber}', [ListOfTransactionController::class, 'end']);
         Route::delete('document/delete/{trackingNumber}', [ListOfTransactionController::class, 'destroy']);
 
         Route::get('service-process-scan/{serviceID}', function ($serviceID) {

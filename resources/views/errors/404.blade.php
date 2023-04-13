@@ -45,7 +45,7 @@ svg {
   border-radius: 4px;
   color: #FFF;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 30px;
   transition: all 0.3s linear;
   cursor: pointer;
   text-decoration: none;
@@ -110,6 +110,7 @@ svg {
           <p>Page not found</p>
           <div class="buttons-con">
             <div class="action-link-wrap">
+                <a href="{{ route('service.incoming') }}">Back to Home</a>
             </div>
           </div>
         </div>

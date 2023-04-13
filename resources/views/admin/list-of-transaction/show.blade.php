@@ -17,7 +17,7 @@
                     <p style="font-weight: bold;">Name: {{ $log->avail_by->fullname }}</p>
                     <p style="font-weight: bold;">Office: {{ $log->avail_by->userOffice->description }}</p>
                 @endif
-            @endforeach   
+            @endforeach
             <h5 class="text-center text-uppercase mt-0 text-dark">
                     {{ $serviceName }} Document
                     <br>
@@ -26,7 +26,7 @@
                <hr class="hr-lg mt-0 mb-2 w-10 mx-auto hr-primary">
                <div class="timeline timeline-left mx-lg-10">
                     <div style="border-radius:5px;" class="timeline-breaker">User
-                       
+
                     </div>
                     @foreach ($logs as $log)
                         @if($log->status == 'pending')
@@ -81,10 +81,14 @@
 
 
                                 @if(Str::upper($document_logs->status) === 'RECEIVED')
-                                <span class=''>by {{ Str::upper($document_logs->received_by_user->fullname) }}</span>
+                                    @if($document_logs->received_by_user?->fullname == null)
+                                        <span class=''>by <b>Admin</b></span>
+                                    @else
+                                        <span class=''>by {{ Str::upper($document_logs->received_by_user?->fullname) }}</span>
+                                    @endif
                                 @elseif(Str::upper($document_logs->status) === 'FORWARDED')
                                 {{-- <span class=''>by {{ Str::upper($document_logs) }}</span> --}}
-                                <span class=''>by {{ Str::upper($document_logs->forwarded_by_user->fullname) }}</span>
+                                <span class=''>by {{ Str::upper($document_logs->forwarded_by_user?->fullname) }}</span>
                                 @elseif(Str::upper($document_logs->status) === 'RETURNED')
                                 <span class='fw-bold'>by {{ Str::upper($document_logs->returnee->fullname) }} <span class='fw-normal'>to</span>
                                      {{ Str::upper($document_logs->return_to->fullname) }}
