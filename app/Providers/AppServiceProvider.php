@@ -100,31 +100,37 @@ class AppServiceProvider extends ServiceProvider
                 ->where('status', 'forwarded')
                 ->get();
             }else{
-                foreach($filter as $filters){
-                    if($filters->status == 'received' && $filters->stage == 'current'){
-                        $manageable = UserService::with('manager_users','information', 'information.process', 'information.requirements')
-                        ->whereHas('manager_users', function($q) use ($userID) {
-                            $q->where('user_id', $userID);
-                        })
-                        // ->where('received_by', null)
-                        // ->where('service_index', '!=', $filters->service_index)
-                        // ->orWhere('service_index', 1)
-                        ->where('stage', 'current')
-                        ->where('status', 'received')
-                        ->get();
-                    } else {
-                        $manageable = UserService::with('manager_users','information', 'information.process', 'information.requirements')
-                            ->whereHas('manager_users', function($q) use ($userID) {
-                                $q->where('user_id', $userID);
-                            })
-                            ->where('received_by', null)
-                            ->where('stage', 'current')
-                            ->where('status', '!=','disapproved')
-                            ->orWhere('stage', 'pending')
-                            ->where('status', 'forwarded')
-                            ->get();
-                    }
-                }
+                $manageable = UserService::with('manager_users','information', 'information.process', 'information.requirements')
+                ->whereHas('manager_users', function($q) use ($userID) {
+                    $q->where('user_id', $userID);
+                })
+                ->where('stage', 'current')
+                ->get();
+                // foreach($filter as $filters){
+                //     if($filters->status == 'received' && $filters->stage == 'current'){
+                //         $manageable = UserService::with('manager_users','information', 'information.process', 'information.requirements')
+                //         ->whereHas('manager_users', function($q) use ($userID) {
+                //             $q->where('user_id', $userID);
+                //         })
+                //         // ->where('received_by', null)
+                //         // ->where('service_index', '!=', $filters->service_index)
+                //         // ->orWhere('service_index', 1)
+                //         ->where('stage', 'current')
+                //         ->where('status', 'received')
+                //         ->get();
+                //     } else {
+                //         $manageable = UserService::with('manager_users','information', 'information.process', 'information.requirements')
+                //             ->whereHas('manager_users', function($q) use ($userID) {
+                //                 $q->where('user_id', $userID);
+                //             })
+                //             ->where('received_by', null)
+                //             ->where('stage', 'current')
+                //             ->where('status', '!=','disapproved')
+                //             ->orWhere('stage', 'pending')
+                //             ->where('status', 'forwarded')
+                //             ->get();
+                //     }
+                // }
             }
 
 
