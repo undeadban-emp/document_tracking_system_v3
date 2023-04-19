@@ -170,6 +170,7 @@ class UserDocumentController extends Controller
         $description = $service->description;
         $process = $service->process;
 
+
         $check = UserService::select('tracking_number', 'service_id','status','stage')
         ->when($transactionCode, function ($query) use ($transactionCode) {
             return $query->where('tracking_number', $transactionCode);

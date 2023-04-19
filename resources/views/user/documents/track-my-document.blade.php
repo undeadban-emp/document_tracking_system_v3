@@ -58,10 +58,16 @@
                     <div class="row justify-content-center">
                          @if ($service !== "no-result")
                          <!--begin col-md-12 -->
-                         <div class="col-md-12 text-center">
-                              <h2>{{ $service->name }} Document</h2>
-
-                         </div>
+                         <h5 class="text-center text-uppercase mt-0 text-dark">
+                            @foreach ($logs as $log)
+                            @if ($loop->first)
+                                {{ $log->request_description }}<br>
+                                <small>{{ $log->tracking_number }}</small>
+                            @endif
+                            @endforeach
+                            <br>
+                            <small>({{ $service->name }})</small>
+                         </h5>
                          <!--end col-md-12 -->
                          <div class="col-md-10">
                               <div class="timeline timeline-left mx-lg-10">

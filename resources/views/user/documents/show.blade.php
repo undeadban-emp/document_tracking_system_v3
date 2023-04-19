@@ -15,9 +15,13 @@
           <div class="clearfix"></div>
           <div class="container-fluid animated animated-done bootdey" data-animate="fadeIn" data-animate-delay="0.05" style="animation-delay: 0.05s;">
                <h5 class="text-center text-uppercase mt-0 text-dark">
-                    {{ $serviceName }} Document
-                    <br>
-                    <small>({{ $description }})</small>
+                @foreach ($logs as $log)
+                @if ($loop->first)
+                    {{ $log->request_description }}
+                @endif
+                @endforeach
+                <br>
+                <small>({{ $serviceName }})</small>
                </h5>
                <hr class="hr-lg mt-0 mb-2 w-10 mx-auto hr-primary">
                <div class="timeline timeline-left mx-lg-10">
