@@ -25,7 +25,8 @@ class UserService extends Pivot
         'remarks',
         'reasons',
         'status',
-        'stage'
+        'stage',
+        'request_description'
     ];
     protected function status(): Attribute
     {
