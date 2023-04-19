@@ -56,39 +56,81 @@ class AppServiceProvider extends ServiceProvider
             $outgoing = UserService::where('received_by', Auth::user()->id)->where('status', 'received')->where('stage', 'current')->get();
             $returned = UserService::where('returned_to', Auth::user()->id)->where('status', 'disapproved')->where('stage', 'current')->get();
 
-            $filter = UserService::with('manager_users')->whereHas('manager_users', function($q) {$q->where('user_id', Auth::user()->id);})->get();
+        //     $filter = UserService::with('manager_users')->whereHas('manager_users', function($q) {$q->where('user_id', Auth::user()->id);})->get();
             $filter2 = UserService::with('manager_users')->whereHas('manager_users', function($q) {$q->where('user_id', Auth::user()->id);})->first();
 
-            foreach($filter as $filters){
-                if($filters->status == 'received' && $filters->stage == 'incoming'){
-                    $userID = Auth::user()->id;
+        //     foreach($filter as $filters){
+        //         if($filters->status == 'received' && $filters->stage == 'incoming'){
+        //             $userID = Auth::user()->id;
+        //                 $manageable = UserService::with('manager_users','information', 'information.process', 'information.requirements')
+        //                 ->whereHas('manager_users', function($q) use ($userID) {
+        //                     $q->where('user_id', $userID);
+        //                 })
+        //                 ->where('received_by', null)
+        //                 ->where('stage', 'incoming')
+        //                 ->where('status', 'received')
+        //                 ->get();
+        //         } else {
+        //             $userID = Auth::user()->id;
+        //             $manageable = UserService::with('manager_users','information', 'information.process', 'information.requirements')
+        //                 ->whereHas('manager_users', function($q) use ($userID) {
+        //                     $q->where('user_id', $userID);
+        //                 })
+        //                 ->where('received_by', null)
+        //                 ->where('stage', 'current')
+        //                 ->where('status', '!=','disapproved')
+        //                 ->orWhere('stage', 'pending')
+        //                 ->where('status', 'forwarded')
+        //                 ->get();
+        //         }
+        // }
+
+            $userID = Auth::user()->id;
+            $filter = UserService::where('stage', 'current')->with('manager_users')->whereHas('manager_users', function($q) {$q->where('user_id', Auth::user()->id);})->get();
+            $checker = UserService::with('manager_users')->whereHas('manager_users', function($q) {$q->where('user_id', Auth::user()->id);})->where('stage', 'current')->get();
+            if($checker == '[]'){
+                $manageable = UserService::with('manager_users','information', 'information.process', 'information.requirements')
+                ->whereHas('manager_users', function($q) use ($userID) {
+                    $q->where('user_id', $userID);
+                })
+                ->where('received_by', null)
+                ->where('stage', 'current')
+                ->where('status', '!=','disapproved')
+                ->orWhere('stage', 'pending')
+                ->where('status', 'forwarded')
+                ->get();
+            }else{
+                foreach($filter as $filters){
+                    if($filters->status == 'received' && $filters->stage == 'current'){
                         $manageable = UserService::with('manager_users','information', 'information.process', 'information.requirements')
                         ->whereHas('manager_users', function($q) use ($userID) {
                             $q->where('user_id', $userID);
                         })
-                        ->where('received_by', null)
-                        ->where('stage', 'incoming')
+                        // ->where('received_by', null)
+                        // ->where('service_index', '!=', $filters->service_index)
+                        // ->orWhere('service_index', 1)
+                        ->where('stage', 'current')
                         ->where('status', 'received')
                         ->get();
-                } else {
-                    $userID = Auth::user()->id;
-                    $manageable = UserService::with('manager_users','information', 'information.process', 'information.requirements')
-                        ->whereHas('manager_users', function($q) use ($userID) {
-                            $q->where('user_id', $userID);
-                        })
-                        ->where('received_by', null)
-                        ->where('stage', 'current')
-                        ->where('status', '!=','disapproved')
-                        ->orWhere('stage', 'pending')
-                        ->where('status', 'forwarded')
-                        ->get();
+                    } else {
+                        $manageable = UserService::with('manager_users','information', 'information.process', 'information.requirements')
+                            ->whereHas('manager_users', function($q) use ($userID) {
+                                $q->where('user_id', $userID);
+                            })
+                            ->where('received_by', null)
+                            ->where('stage', 'current')
+                            ->where('status', '!=','disapproved')
+                            ->orWhere('stage', 'pending')
+                            ->where('status', 'forwarded')
+                            ->get();
+                    }
                 }
-        }
+            }
 
 
 
             //check id for user role
-            $userID = Auth::user()->id;
+            // $userID = Auth::user()->id;
             $userRole = DB::table('users')->where('id', $userID)->first();
 
             $forRelease = UserService::with(['information', 'information.process'])->where('received_by', Auth::user()->id)->where('stage', 'current')->where('status', 'received')->get()->filter(function ($record) {

@@ -1,11 +1,11 @@
 @extends('layouts.app')
-@section('page-title', $service->description)
+@section('page-title', $service2->description)
 @prepend('page-css')
 @endprepend
 @section('content')
 @include('templates.success')
 @include('templates.errors')
-{{-- @if($service->status === 'pending' || $service->status === 'forwarded') --}}
+{{-- @if($service2->status === 'pending' || $service2->status === 'forwarded') --}}
 <form action="{{ route('service.document.received', $trackingNumber) }}" method="POST" enctype="multipart/form-data">
      {{-- @else
      <form action="{{ route('service.forward', $trackingNumber) }}" method="POST" enctype="multipart/form-data">
@@ -24,20 +24,20 @@
                                  </tr>
                                  <tr>
                                       <td>Service  Name:</td>
-                                      <td class='fw-bold text-dark'>{{ $service->information->name }}</td>
+                                      <td class='fw-bold text-dark'>{{ $service2->information->name }}</td>
                                  </tr>
                                  <tr>
                                       <td>Description:</td>
-                                      <td class='fw-bold text-dark'>{{ $service->information->description }}</td>
+                                      <td class='fw-bold text-dark'>{{ $service2->information->description }}</td>
                                  </tr>
                                  <tr>
                                       <td>Liaison Incharge:</td>
-                                      <td class='fw-bold text-dark fw-medium'>{{ $service->avail_by->lastname }}, {{ $service->avail_by->firstname }} {{ $service->avail_by->middlename }}
-                                           {{ $service->avail_by->suffix }}</td>
+                                      <td class='fw-bold text-dark fw-medium'>{{ $service2->avail_by->lastname }}, {{ $service2->avail_by->firstname }} {{ $service2->avail_by->middlename }}
+                                           {{ $service2->avail_by->suffix }}</td>
                                  </tr>
                                  <tr>
                                     <td>Office:</td>
-                                    <td class='fw-bold text-dark'>{{ $service->avail_by->userOffice->description }}</td>
+                                    <td class='fw-bold text-dark'>{{ $service2->avail_by->userOffice->description }}</td>
                                 </tr>
                                  <tr>
                                       <td>Date Created:</td>
@@ -45,7 +45,7 @@
                                  </tr>
                                  <tr>
                                       <td>Submission Description:</td>
-                                      <td class="fw-bold text-dark">{{ $service->request_description }}</td>
+                                      <td class="fw-bold text-dark">{{ $service2->request_description }}</td>
                                  </tr>
                             </tbody>
                        </table>
@@ -71,16 +71,16 @@
                             @endforeach
                        </ol>
                        <br>
-                       @if($service->status === 'received')
+                       @if($service2->status === 'received')
                        <div class="form-group d-none">
                             <label class='text-dark font-size-17' for="#returnTo">(Select if return) : </label>
                             <select name="returnTo" id="returnTo" class='form-control form-select'>
-                                 <option value="{{ $service->user_id }}|{{ $service->forwarded_by }}|{{ $service->service_index }}">
-                                      (Liaison Incharge) {{ $service->avail_by->fullname }}
+                                 <option value="{{ $service2->user_id }}|{{ $service2->forwarded_by }}|{{ $service2->service_index }}">
+                                      (Liaison Incharge) {{ $service2->avail_by->fullname }}
                                  </option>
 
                                  @foreach($responsibles as $u)
-                                 <option value="{{ $u->responsible_user }}|{{ $service->forwarded_by }}|{{ $u->index }}">
+                                 <option value="{{ $u->responsible_user }}|{{ $service2->forwarded_by }}|{{ $u->index }}">
                                       {{ $u->user->fullname }} - {{ $u->responsible }}
                                  </option>
                                  @endforeach
@@ -100,17 +100,17 @@
                     </div>
                 </div>
                     <div class="float-end mt-3">
-                        @if($service->information->process->last()->index == $service->service_index)
-                            @if($service->status == 'pending' && $service->stage == 'current')
+                        @if($service2->information->process->last()->index == $service2->service_index)
+                            @if($service2->status == 'pending' && $service2->stage == 'current')
                                 <input type="submit" name="action" id="receive" class='btn btn-success shadow' value='Receive'>
                             @else
                                 <input type="submit" name="action" id="disapproved1" class='btn btn-danger shadow' value='Disapprove'>
                                 <input type="submit" name="action" id="release" class='btn btn-info shadow' value='Release'>
                             @endif
                         @else
-                            @if($service->status == 'pending' && $service->stage == 'current')
+                            @if($service2->status == 'pending' && $service2->stage == 'current')
                             <input type="submit" name="action" id="receive" class='btn btn-success shadow' value='Receive'>
-                            @elseif($service->status == 'received' && $service->stage == 'current' && $service->received_by != Auth::user()->id)
+                            @elseif($service2->status == 'received' && $service2->stage == 'current' && $service2->received_by != Auth::user()->id)
                             <input type="submit" name="action" id="receive" class='btn btn-success shadow' value='Receive'>
                             @else
                             <input type="submit" name="action" id="disapproved2" class='btn btn-danger shadow' value='Disapprove'>
@@ -121,6 +121,7 @@
                </div>
           </div>
      </form>
+
 
      <!-- end row -->
      @push('page-scripts')
