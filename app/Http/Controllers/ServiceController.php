@@ -123,6 +123,7 @@ class ServiceController extends Controller
 
             $service2 = UserService::with(['manager_users', 'information', 'information.process', 'information.requirements'])->where('tracking_number', $transactionCode)->where('stage', 'current')->first();
 
+
             $incoming = UserService::with(['avail_by', 'information', 'forwarded_by_user'])->where('tracking_number', $transactionCode)->where('forward_to', Auth::user()->id)->where('stage', 'current')->first();
 
             $outgoing = UserService::where('tracking_number', $transactionCode)->where('received_by', Auth::user()->id)->where('stage', 'current')->where('status', 'received')->get()->filter(function ($record) {
@@ -179,9 +180,9 @@ class ServiceController extends Controller
                 return $record->service_index == array_values($record->information->process->pluck('index')->reverse()->toArray())[0];
             });
 
-            // dd($manage);
             if (is_null($service2)) {
-                return redirect()->to(route('service.incoming'));
+                return view('errors.done');
+                // return redirect()->to(route('service.incoming'));
             }
             $incomingChecker = 0;
             $outgoingChecker = 0;
@@ -213,90 +214,9 @@ class ServiceController extends Controller
                 $forReleaseChecker += 1;
             }
 
-            // dd($incomingChecker);
-            // dd($outgoingChecker);
-            // dd($manageChecker);
-            // dd($forReleaseChecker);
-
             if ($incomingChecker == 0 && $outgoingChecker == 0 && $manageChecker == 0 && $forReleaseChecker == 0) {
                 abort(404);
             }
-
-
-            // if($service2->received_by == null || $service2->forwarded_to == Auth::user()->id || $service2->manager == Auth::user()->id ){
-
-            //     $checker = UserService::with('manager_users','information', 'information.process', 'information.requirements')
-            //     ->whereHas('manager_users', function($q) {
-            //         $q->where('user_id', Auth::user()->id);
-            //     })
-            //     ->where('tracking_number', $transactionCode)
-            //     ->where('received_by', null)
-            //     ->where('stage', 'incoming')
-            //     ->where('status', 'received')
-            //     ->get();
-
-            //     $service = UserService::with('manager_users','information', 'information.process', 'information.requirements')
-            //     ->whereHas('manager_users', function($q) {
-            //         $q->where('user_id', Auth::user()->id);
-            //     })
-            //     ->where('tracking_number', $transactionCode)
-            //     ->where('received_by', null)
-            //     ->where('stage', 'incoming')
-            //     ->where('status', 'received')
-            //     ->get();
-
-            //     if (is_null($service)) {
-            //         return redirect()->to(route('home'));
-            //     }
-            //     $isAbort1 = 0;
-            //     $isAbort2 = 0;
-
-            //     if($checker != '[]'){
-            //         foreach($service as $servicess){
-            //             foreach($servicess->manager_users as $services){
-            //                 dd($services);
-            //                 if ($services->user_id == Auth::user()->id) {
-            //                         $isAbort1 += 1;
-            //                 }else{
-            //                         $isAbort1 = 0;
-            //                 }
-            //             }
-            //         }
-
-            //     }else{
-            //         $isAbort1 = 0;
-            //         $isAbort2 = 0;
-            //     }
-
-            //     if (is_null($service)) {
-            //         return redirect()->to(route('home'));
-            //     }
-
-            //     if ($service2->forward_to == Auth::user()->id) {
-            //         $isAbort2 += 1;
-            //     } else {
-            //         $isAbort2 = 0;
-            //     }
-            //     if ($isAbort1 == 0 && $isAbort2 == 0) {
-            //         abort(404);
-            //     }
-            // }else if($service2->received_by != null && $service2->forward_to == Auth::user()->id){
-            //     $isAbort1 = 0;
-            //     $isAbort2 = 0;
-            //     $service2 = UserService::with(['manager_users', 'information', 'information.process', 'information.requirements'])->where('tracking_number', $transactionCode)->where('stage', 'current')->first();
-            //     if($service2->received_by == Auth::user()->id){
-            //         $isAbort2 += 1;
-            //     }else{
-            //         $isAbort2 = 0;
-            //     }
-            //     if ($isAbort2 == 0) {
-            //         abort(404);
-            //     }
-            // }
-
-
-
-
 
             $dateApplied = $service2->created_at;
 
