@@ -28,6 +28,7 @@ return new class extends Migration
             $table->foreignId('manager_id')->nullable();
             $table->text('remarks')->nullable();
             $table->text('reasons')->nullable();
+            $table->text('indicator')->nullable();
             $table->enum('status', ['pending', 'forwarded', 'received', 'disapproved', 'last']);
             $table->enum('stage', ['passed', 'current', 'incoming'])->default('incoming');
             $table->timestamps();

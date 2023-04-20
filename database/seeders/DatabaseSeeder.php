@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             PositionSeeder::class,
             UserSeeder::class,
             ManagerUserCountSeeder::class,
+            TransCodeSeeder::class,
             // ServiceProcessingSeeder::class,
         ]);
         //  User::factory(5)->create();

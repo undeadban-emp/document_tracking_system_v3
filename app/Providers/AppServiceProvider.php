@@ -105,6 +105,7 @@ class AppServiceProvider extends ServiceProvider
                     $q->where('user_id', $userID);
                 })
                 ->where('stage', 'current')
+                ->where('indicator', null)
                 ->get();
                 // foreach($filter as $filters){
                 //     if($filters->status == 'received' && $filters->stage == 'current'){

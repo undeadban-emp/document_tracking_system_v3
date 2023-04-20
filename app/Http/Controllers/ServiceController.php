@@ -157,6 +157,7 @@ class ServiceController extends Controller
                         ->where('tracking_number', $transactionCode)
                         ->where('stage', 'current')
                         ->where('status', 'received')
+                        // ->where('received_by', Auth::user()->id)
                         ->first();
                     } else {
                         $manage = UserService::with('manager_users','information', 'information.process', 'information.requirements')
@@ -186,6 +187,7 @@ class ServiceController extends Controller
             $outgoingChecker = 0;
             $manageChecker = 0;
             $forReleaseChecker = 0;
+
 
             if($incoming == null){
                 $incomingChecker = 0;
@@ -321,7 +323,7 @@ class ServiceController extends Controller
 
             $service = UserService::where('tracking_number', $request->tracking_number)->where('stage', 'current')->first();
             DB::table('user_service')->where('tracking_number', $request->tracking_number)->where('stage', 'current')
-            ->update(['stage'=> 'passed']);
+            ->update(['stage'=> 'passed', 'indicator' => Auth::user()->id]);
             // Check if Avail by is equal to returned to
             if ($service->user_id == $returnedTo) {
                 DB::table('user_service')->insert([
@@ -335,6 +337,7 @@ class ServiceController extends Controller
                     'returned_by' => Auth::user()->id,
                     'returned_to' => $returnedTo,
                     'reasons' => $request->reasons,
+                    'indicator' => Auth::user()->id,
                     'request_description' => $service->request_description,
                     'status' => 'disapproved',
                     'stage' => 'current',
@@ -368,14 +371,18 @@ class ServiceController extends Controller
             $index_checker = UserService::where('tracking_number', $trackingNumber)->where('status', 'last')->first();
             if ($currentRecord->status === 'pending') {
                 // Look for the next received update the current to passed then change the status of next record to current.
-                DB::transaction(function () use ($trackings, $currentRecord) {
+                DB::transaction(function () use ($trackings, $currentRecord, $index_checker) {
                     $currentRecord->updated_at;
                     $nextRecord = $trackings->where('service_index', '=', $currentRecord->service_index)->where('status', 'received')->where('stage', 'incoming')->where('stage', 'incoming')->first();
                     $nextRecord->stage = 'current';
                     $nextRecord->forwarded_by = $currentRecord->forwarded_by;
                     $currentRecord->stage = 'passed';
                     $currentRecord->timestamps = false;
+                    $currentRecord->indicator = Auth::user()->id;
                     $currentRecord->save();
+                    if($nextRecord->service_index == $index_checker->service_index){
+                        $nextRecord->indicator = Auth::user()->id;
+                    }
                     $nextRecord->received_by = Auth::user()->id;
                     $nextRecord->save(['timestamps' => false]);
                 });
@@ -406,17 +413,22 @@ class ServiceController extends Controller
                 // if((int)$index_checker->forwarded_by != $currentRecord->service_index){
                 if($index_checker->service_index != $currentRecord->service_index){
                     // check service index if same
-                    DB::transaction(function () use ($trackings, $currentRecord, $request) {
+                    DB::transaction(function () use ($trackings, $currentRecord, $index_checker,$request) {
                         $currentRecord->updated_at;
                         $nextRecord = $trackings->where('service_index', '=', ($currentRecord->service_index + 1))->where('status', 'received')->where('stage', 'incoming')->first();
+
+
                         $nextRecord->stage = 'current';
                         $nextRecord->forwarded_by = $currentRecord->forwarded_by;
                         $currentRecord->stage = 'passed';
                         $currentRecord->timestamps = false;
+                        $currentRecord->indicator = Auth::user()->id;
                         $currentRecord->save();
                         $nextRecord->received_by = Auth::user()->id;
+                        if($nextRecord->service_index == $index_checker->service_index){
+                            $nextRecord->indicator = Auth::user()->id;
+                        }
                         $nextRecord->save(['timestamps' => false]);
-
                         if($currentRecord->avail_by->phone_number != null){
                             $phoneNumber = $currentRecord->avail_by->phone_number;
                         }else{
@@ -447,8 +459,10 @@ class ServiceController extends Controller
                         $nextRecord->forwarded_by = $currentRecord->forwarded_by;
                         $currentRecord->stage = 'passed';
                         $currentRecord->timestamps = false;
+                        $currentRecord->indicator = Auth::user()->id;
                         $currentRecord->save();
                         $nextRecord->received_by = Auth::user()->id;
+                        $nextRecord->indicator = Auth::user()->id;
                         $nextRecord->save(['timestamps' => false]);
 
                         if($currentRecord->avail_by->phone_number != null){
@@ -505,8 +519,9 @@ class ServiceController extends Controller
                     'message' => 'Please comply all the required requirements to proceed.'
                ]);
           }
-
-          $trackingNumber = $service->service_process_id .  date('m') . date('d') . date('Y') . $userID . UserService::get()->groupBy('tracking_number')->count() + 1;
+          $transCodes = Db::table('trans_codes')->where('code', 'code')->first();
+          $trackingNumber = $service->service_process_id .  date('m') . date('d') . date('Y') . $userID . $transCodes->value;
+          DB::table('trans_codes')->increment('value', 1);
 
           $filenames = [];
 
@@ -583,7 +598,6 @@ class ServiceController extends Controller
                ->where('status', 'disapproved')
                 ->where('stage', 'current')
                ->first();
-
           $filenames = [];
 
           // attach the files here...
@@ -798,6 +812,7 @@ class ServiceController extends Controller
             $userID = Auth::user()->id;
             $filter = UserService::where('stage', 'current')->with('manager_users')->whereHas('manager_users', function($q) {$q->where('user_id', Auth::user()->id);})->get();
             $checker = UserService::with('manager_users')->whereHas('manager_users', function($q) {$q->where('user_id', Auth::user()->id);})->where('stage', 'current')->get();
+
             if($checker == '[]'){
                 $manage = UserService::with('manager_users','information', 'information.process', 'information.requirements')
                 ->whereHas('manager_users', function($q) use ($userID) {
@@ -817,6 +832,7 @@ class ServiceController extends Controller
                             $q->where('user_id', $userID);
                         })
                         ->where('stage', 'current')
+                        ->where('indicator', null)
                         ->get();
 
                     // if($filters->status == 'received' && $filters->stage == 'current'){

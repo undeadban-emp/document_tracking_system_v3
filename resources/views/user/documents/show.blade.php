@@ -82,7 +82,7 @@
                                 @if($document_logs->received_by_user?->fullname == null)
                                 {{ $serviceName }} {{ $document_logs->request_description }} - <span class='text-uppercase font-size-15 fw-bold'>{{ Str::upper($document_logs->status) == 'LAST' ? 'Released By Admin' : 'Skip' }} </span>
                                 @else
-                                    {{ $serviceName }} {{ $document_logs->request_description }} - <span class='text-uppercase font-size-15 fw-bold'>{{ Str::upper($document_logs->status) == 'LAST' ? 'Released' : $document_logs->status }} </span>
+                                    {{ $serviceName }} {{ $document_logs->request_description }} - <span class='text-uppercase font-size-15 fw-bold'>{{ Str::upper($document_logs->status) == 'LAST' ? 'Released' : $document_logs->status }}  by {{ Str::upper($document_logs->received_by_user?->fullname) }}</span>
                                 @endif
 
 

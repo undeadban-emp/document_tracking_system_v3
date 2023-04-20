@@ -26,6 +26,7 @@ class UserService extends Pivot
         'reasons',
         'status',
         'stage',
+        'indicator',
         'request_description'
     ];
     protected function status(): Attribute
