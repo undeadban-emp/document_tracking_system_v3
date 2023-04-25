@@ -145,6 +145,22 @@
                 </div>
             </div>
 
+            <div class="row mb-3 d-none"  id="classIsSub">
+                <label for="isSub" class="col-md-4 col-form-label text-md-end">{{ __('Is Sub') }} <span class="text-danger">*</span></label>
+                <div class="col-md-6">
+                    <select class="form-control selectpicker @error('isSub') is-invalid @enderror" id="isSub" name="isSub" data-live-search="true" data-width="100%" data-dropup-auto="false" data-size="3" autofocus>
+                        <option></option>
+                        <option value="1" @if (old('isSub', $user->isSub == '1')) selected @endif>Yes</option>
+                        <option value="0" @if (old('isSub', $user->isSub == '0')) selected @endif>No</option>
+                    </select>
+                    @error('isSub')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+            </div>
+
             <div class="row mb-0 justify-content-end">
                 <div class="col-md-6">
                     <a href="{{ route('admin.user.index') }}"><button type="button" class="btn btn-danger">Cancel</button></a>
@@ -201,7 +217,21 @@
 @push('page-scripts')
 <script>
 $(document).ready(function(){
+    if($('#isSub').val() == '0'){
+        $('#classIsSub').removeClass( "d-none" );
+    }
+
     $("#positionsDataTables").DataTable();
+
+    $('#accountRole').change(function(){
+        if($(this).val() == 'liaison'){
+            $('#classIsSub').removeClass( "d-none" );
+            $("#isSub").val("0").trigger("change");
+        }else{
+            $("#classIsSub").addClass( "d-none" );
+            $("#isSub").val("1").trigger("change");
+        }
+    });
 });
 </script>
 @endpush

@@ -36,7 +36,8 @@ class User extends Authenticatable
         'profile_picture',
         'office',
         'role',
-        'profile_picture'
+        'profile_picture',
+        'isSub'
     ];
 
     /**

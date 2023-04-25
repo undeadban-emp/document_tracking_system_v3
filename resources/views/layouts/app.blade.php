@@ -127,44 +127,13 @@
                               <ul class="metismenu list-unstyled" id="side-menu">
 
 
-                                    @if ($userRole->role == 'checker')
-                                    <li class="menu-title">Menu</li>
-                                    <li>
-                                        <a href="{{ route('service.incoming') }}" class="waves-effect">
-                                            <i class="mdi mdi-file-download-outline"></i>
-                                             <span>Incoming </span>
-                                             <span class='mx-2 badge bg-primary'>{{ $incoming_documents }}</span>
-                                        </a>
-                                   </li>
-                                   <li>
-                                        <a href="{{ route('service.outgoing') }}" class="waves-effect">
-                                             <i class="mdi mdi-file-export-outline"></i>
-                                             <span>On-Process</span>
-                                             <span class='mx-2 badge bg-primary'>{{ ($outgoing_documents - $for_release_documents ) < 0 ? 0 : ($outgoing_documents - $for_release_documents ) }}</span>
-                                        </a>
-                                   </li>
-                                   <li>
-                                    <a href="{{ route('service.for-release') }}" class="waves-effect">
-                                        <i class="mdi mdi-file-export-outline"></i>
-                                        <span>For Release</span>
-                                        <span class='mx-2 badge bg-primary'>{{ $for_release_documents }}</span>
-                                    </a>
-                                </li>
-                                   <li>
-                                        <a href="{{ route('service.manage') }}" class=" waves-effect">
-                                             <i class='mdi mdi-folder-multiple-outline'></i>
-                                             <span>Manage</span>
-                                             <span class='mx-2 badge bg-info'>{{ $manage_documents }}</span>
-                                        </a>
-                                   </li>
-                                   <li class="menu-title">Logs</li>
-                                   <li>
-                                        <a href="{{ route('user.logs') }}" class=" waves-effect">
-                                             <i class='mdi mdi-history'></i>
-                                             <span>Transactions History</span>
-                                        </a>
-                                   </li>
-                                    @else
+
+
+
+
+
+
+                                @if ($userRole->role == 'liaison')
                                     <li class="menu-title">Dashboard</li>
                                     <li>
                                         <a href="{{ route('service.track-my-document') }}" class=" waves-effect">
@@ -196,20 +165,46 @@
                                               <span>Services</span>
                                          </a>
                                     </li>
-                                    <li class="menu-title">Logs</li>
+                                @endif
+                                    @if ($userRole->isSub == '1')
+                                    <li class="menu-title">Transaction Menu</li>
                                     <li>
-                                         <a href="{{ route('user.logs') }}" class=" waves-effect">
-                                              <i class='mdi mdi-history'></i>
-                                              <span>Transactions History</span>
-                                         </a>
-                                    </li>
-                                    @endif
+                                        <a href="{{ route('service.incoming') }}" class="waves-effect">
+                                            <i class="mdi mdi-file-download-outline"></i>
+                                             <span>Incoming </span>
+                                             <span class='mx-2 badge bg-primary'>{{ $incoming_documents }}</span>
+                                        </a>
+                                   </li>
+                                   <li>
+                                        <a href="{{ route('service.outgoing') }}" class="waves-effect">
+                                             <i class="mdi mdi-file-export-outline"></i>
+                                             <span>On-Process</span>
+                                             <span class='mx-2 badge bg-primary'>{{ ($outgoing_documents - $for_release_documents ) < 0 ? 0 : ($outgoing_documents - $for_release_documents ) }}</span>
+                                        </a>
+                                   </li>
+                                   <li>
+                                    <a href="{{ route('service.for-release') }}" class="waves-effect">
+                                        <i class="mdi mdi-file-export-outline"></i>
+                                        <span>For Release</span>
+                                        <span class='mx-2 badge bg-primary'>{{ $for_release_documents }}</span>
+                                    </a>
+                                </li>
+                                   <li>
+                                        <a href="{{ route('service.manage') }}" class=" waves-effect">
+                                             <i class='mdi mdi-folder-multiple-outline'></i>
+                                             <span>Manage</span>
+                                             <span class='mx-2 badge bg-info'>{{ $manage_documents }}</span>
+                                        </a>
+                                   </li>
 
-
-
-
-
-
+                                @endif
+                                <li class="menu-title">Logs</li>
+                                <li>
+                                     <a href="{{ route('user.logs') }}" class=" waves-effect">
+                                          <i class='mdi mdi-history'></i>
+                                          <span>Transactions History</span>
+                                     </a>
+                                </li>
                               </ul>
                          </div>
                          <!-- Sidebar -->

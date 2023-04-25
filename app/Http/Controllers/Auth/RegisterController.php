@@ -75,6 +75,11 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        if($data['role'] == 'checker'){
+            $isSub = '1';
+        }else{
+            $isSub = '0';
+        }
         Log::info('New User Registration ' . ' ' .$data['firstname'] . ' ' .$data['lastname'] . '(' .$data['username'] . ')');
         return User::create([
             'firstname' => $data['firstname'],
@@ -87,6 +92,7 @@ class RegisterController extends Controller
             'role' => $data['role'],
             'username' => $data['username'],
             'password' => Hash::make($data['password']),
+            'isSub' => $isSub,
         ]);
 
     }

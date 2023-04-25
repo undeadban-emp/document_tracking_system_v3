@@ -39,7 +39,7 @@ class ServiceProcessController extends Controller
     public function create(Request $request)
     {
         $service = Service::findOrFail($request->service_id);
-        $users = User::where('role', 'checker')->get();
+        $users = User::where('isSub', '1')->get();
         $offices = Office::get();
         return view('admin.service.process.create', compact('service', 'users', 'offices'));
     }
@@ -79,7 +79,7 @@ class ServiceProcessController extends Controller
                     ]);
                 }
             }
-           
+
             return redirect()->route('admin.service-process.index', ['id' => $service->id])->with('success', 'Process was successfully added to ' . $service->name);
         }
     }

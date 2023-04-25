@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('profile_picture')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->enum('role', ['liaison', 'checker']);
+            $table->string('isSub')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

@@ -147,7 +147,8 @@ class UserSeeder extends Seeder
             'role' => 'checker',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
-            'status'    =>  'approved'
+            'status'    =>  'approved',
+            'isSub' => '1'
         ]);
 
         User::create([
@@ -162,7 +163,8 @@ class UserSeeder extends Seeder
             'role' => 'checker',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
-            'status'    =>  'approved'
+            'status'    =>  'approved',
+            'isSub' => '1'
         ]);
 
         User::create([
@@ -177,7 +179,8 @@ class UserSeeder extends Seeder
             'role' => 'checker',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
-            'status'    =>  'approved'
+            'status'    =>  'approved',
+            'isSub' => '1'
         ]);
 
 
@@ -193,7 +196,8 @@ class UserSeeder extends Seeder
             'role' => 'checker',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
-            'status'    =>  'approved'
+            'status'    =>  'approved',
+            'isSub' => '1'
         ]);
 
         User::create([
@@ -208,7 +212,8 @@ class UserSeeder extends Seeder
             'role' => 'checker',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
-            'status'    =>  'approved'
+            'status'    =>  'approved',
+            'isSub' => '1'
         ]);
 
         User::create([
@@ -223,7 +228,8 @@ class UserSeeder extends Seeder
             'role' => 'checker',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
-            'status'    =>  'approved'
+            'status'    =>  'approved',
+            'isSub' => '1'
         ]);
 
         User::create([
@@ -238,8 +244,26 @@ class UserSeeder extends Seeder
             'role' => 'liaison',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
-            'status'    =>  'approved'
+            'status'    =>  'approved',
+            'isSub' => '1'
         ]);
+
+        User::create([
+            'firstname' => 'Winfox2',
+            'lastname' => 'Balbarino2',
+            'middlename' => '',
+            'username' => 'user8',
+            'email' => 'user6@yahoo.com',
+            'phone_number' => '09709515936',
+            'position' => 8,
+            'office' => 1001,
+            'role' => 'liaison',
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'remember_token' => Str::random(10),
+            'status'    =>  'approved',
+            'isSub' => '0'
+        ]);
+
 
 
 

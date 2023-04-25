@@ -148,7 +148,7 @@
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 ">
                 <label for="accountRole" class="col-md-4 col-form-label text-md-end">{{ __('Account Role') }} <span class="text-danger">*</span></label>
 
                 <div class="col-md-6">
@@ -158,6 +158,21 @@
                         <option value="checker" @if (old('accountRole')) selected @endif>Checker</option>
                     </select>
                     @error('accountRole')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="row mb-3 d-none"  id="classIsSub">
+                <label for="isSub" class="col-md-4 col-form-label text-md-end">{{ __('Is Sub') }} <span class="text-danger">*</span></label>
+                <div class="col-md-6">
+                    <select class="form-control selectpicker @error('isSub') is-invalid @enderror" id="isSub" name="isSub" data-live-search="true" data-width="100%" data-dropup-auto="false" data-size="3" autofocus>
+                        <option value="0" @if (old('isSub')) selected @endif>No</option>
+                        <option value="1" @if (old('isSub')) selected @endif>Yes</option>
+                    </select>
+                    @error('isSub')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
@@ -181,6 +196,15 @@
 <script>
 $(document).ready(function(){
     $("#positionsDataTables").DataTable();
+    $('#accountRole').change(function(){
+        if($(this).val() == 'liaison'){
+            $('#classIsSub').removeClass( "d-none" );
+            $("#isSub").val("0").trigger("change");
+        }else{
+            $("#classIsSub").addClass( "d-none" );
+            $("#isSub").val("1").trigger("change");
+        }
+    });
 });
 </script>
 @endpush

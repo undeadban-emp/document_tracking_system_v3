@@ -102,6 +102,7 @@ class UserController extends Controller
             'password' => bcrypt($request['password']),
             'status'    =>  'approved',
             'role'    =>  $request['accountRole'],
+            'isSub'    =>  $request['isSub'],
         ]);
 
         return redirect()->route('admin.user.index')->with('success', 'User was successfully added.');
@@ -165,6 +166,7 @@ class UserController extends Controller
                 $user->office = $request->office;
                 $user->username = $request->username;
                 $user->role = $request->accountRole;
+                $user->isSub = $request->isSub;
                 $user->save();
  return redirect()->route('admin.user.index')->with('success', 'Updated successfully');
 
